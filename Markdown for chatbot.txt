@@ -1,0 +1,52 @@
+You are an expert full-stack developer. Build a production-ready, feature-rich single-page web application using standard semantic HTML5, Tailwind CSS (via CDN), and modern vanilla JavaScript (ES6+). The entire application must run completely client-side inside the browser without requiring a dedicated backend server.
+
+Implement the following features dynamically within a beautifully styled dashboard interface:
+
+1. INTERACTION MODES (Dropdown or Sidebar Toggle)
+Alter the system instructions payload dynamically based on the selected mode:
+- 'Prompt Enhancer': Injects instructions to expand the user's prompt into a highly detailed version before executing it.
+- 'Markdown': Explicitly instructs the model to format responses in clean Markdown.
+- 'Q&A': Injects a rule for highly concise, direct answers, skipping conversational pleasantries.
+- 'Code Generator': Explicitly tells the model to prioritize code-based layouts and wrap output inside clean code blocks.
+
+2. AI-EXPERT PERSONA SELECTOR (Dropdown Menu)
+Inject one of these tailored system prompt templates behind the scenes based on user selection:
+- Developer: "Elite Senior Developer and AI pair-programming pioneer. Writes clean, DRY, SOLID, production-ready code with complete implementations."
+- Code Reviewer: "Ultra-precise automated code auditor. Breaks feedback into: Critical/Security, Performance, and Style. Provides exact refactored code fixes."
+- Architect: "Principal Systems Architect specializing in scalable, cloud-native distributed systems. Evaluates trade-offs using pros/cons matrices."
+- Project Manager: "Agile Project Manager and Scrum Master. Drafts clear user stories, acceptance criteria, and breaks down tasks into sub-tasks."
+- Business Analyst: "Lead Business Analyst bridging business goals and technical teams. Formulates formal functional and non-functional requirements."
+- Tester: "Lead QA Automation Engineer. Generates complete test plans and automation scripts using modern frameworks (Playwright/Jest)."
+- Technical Writer: "Senior Technical Writer. Converts complex systems into accessible, perfectly structured Markdown documentation and API references."
+
+3. CONVERSATION OBJECTIVE & NEW CONVERSATION
+- Objective / Goal Input: Add a text input field at the top of the chat area labeled "Objective / Goal" defaulting to "General Purpose". This string must be appended to the system prompt of every outgoing API request to ground the AI's contextual focus.
+- New Conversation Button: Add a prominent '+ New Chat' button at the top of the sidebar. Clicking it must immediately wipe the active chat window view, clear attached files, reset the conversation objective to 'General Purpose', and instantiate a clean message payload array.
+
+4. MESSAGE ACTIONS
+Render an action utility bar directly underneath every chatbot bubble:
+- 'Copy' Button: Copies the raw text content directly to the user's clipboard.
+- 'Export' Button: Triggers an instant browser download of that specific message as a formatted file (e.g., chat_response.md).
+
+5. API & MODEL CONFIGURATION PANEL
+- Build a slide-out settings panel or modal that initializes from a configuration JSON object and persists updates to LocalStorage.
+- Predefine the following options in the default configuration JSON:
+  * OpenAI: gpt-4o, gpt-4-turbo (Base URL: https://openai.com)
+  * Gemini: gemini-1.5-pro, gemini-1.5-flash (Base URL: https://googleapis.com)
+- Input UI fields required: Provider Dropdown, Model Selector, Base URL, API Key, and a Temperature slider (0.0 to 1.0).
+
+6. MULTI-MODAL INPUTS (Text, Voice, and File Upload)
+- Text Input: An auto-expanding textarea supporting 'Enter' to submit and 'Shift+Enter' for new lines.
+- Voice Input: A microphone toggle button that wraps the native browser Web Speech API (SpeechRecognition) to dictate words directly into the textarea text field in real-time.
+- File Upload: An attachment button accepting .txt, .md, .json, and .pdf files. 
+  * Note: Include the popular 'pdfjs-dist' library via CDN link to parse and extract text strings from uploaded PDFs completely client-side. Append the extracted file text cleanly inside a wrapping "Context Reference: [File Content]" block at the end of the final prompt payload.
+
+7. LOCAL CHAT HISTORY SIDEBAR
+- Automatically save all conversational histories, current mode settings, and active session streams to browser LocalStorage.
+- Display past chats chronologically in a sidebar panel with timestamps. 
+- Allow users to click a past chat entry to fully restore its state, or click a 'Delete' icon to remove it from LocalStorage.
+
+DESIGN & UX REQUIREMENTS:
+- Create a modern, high-contrast dark-themed interface reminiscent of cutting-edge AI IDEs or tools like Claude and ChatGPT.
+- Build completely functional, non-placeholder JavaScript functions handling the local file parsing (PDF text extraction), storage array loops, and the structural `fetch()` calls to OpenAI/Gemini endpoints.
+- Display reactive UI states like loading animations/spinners inside the chat stream during active API fetch calls.
