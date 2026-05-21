@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity LLM Chatbot</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Prism.js Tomorrow Theme for Code Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            darkbg: '#0F121D',
+            darksidebar: '#07090F',
+            accent: '#6366F1', // Indigo
+            glow: '#8B5CF6', // Purple
+            cybercard: '#181C2E',
+            glassborder: 'rgba(255, 255, 255, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Core Styles -->
+  <style>
+    body {
+      background-color: #0F121D;
+      color: #E2E8F0;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 18, 29, 0.2);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.5);
+    }
+    .glassmorphism {
+      background: rgba(24, 28, 46, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .glass-input {
+      background: rgba(15, 18, 29, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-input:focus {
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+      outline: none;
+    }
+    /* Pulse glow keyframes */
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(99, 102, 241, 0.3), 0 0 10px rgba(99, 102, 241, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.6), 0 0 25px rgba(139, 92, 246, 0.4);
+      }
+    }
+    .mic-active {
+      animation: pulse-glow 1.5s infinite;
+      background-color: #EF4444 !important;
+      color: white !important;
+    }
+    /* Typing indicator dots */
+    .typing-dot {
+      animation: typing-bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing-bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+    /* Custom Markdown Elements */
+    .markdown-content p {
+      margin-bottom: 0.75rem;
+      line-height: 1.625;
+    }
+    .markdown-content p:last-child {
+      margin-bottom: 0;
+    }
+    .markdown-content ul, .markdown-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 0.75rem;
+      list-style-type: disc;
+    }
+    .markdown-content ol {
+      list-style-type: decimal;
+    }
+    .markdown-content li {
+      margin-bottom: 0.25rem;
+    }
+    .markdown-content pre {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      border-radius: 0.5rem !important;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .markdown-content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875em;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+    }
+    .markdown-content pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.85em;
+    }
+    .markdown-content h1 { font-size: 1.5rem; font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; }
+    .markdown-content h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+    .markdown-content h3 { font-size: 1.1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.4rem; }
+    .markdown-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+    }
+    .markdown-content th, .markdown-content td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .markdown-content th {
+      background: rgba(99, 102, 241, 0.1);
+      font-weight: 600;
+    }
+    .markdown-content blockquote {
+      border-left: 4px solid #6366F1;
+      padding-left: 1rem;
+      color: #94A3B8;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden font-sans">
+
+  <!-- Global Error Boundary Alert Banner -->
+  <div id="error-boundary-banner" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full mx-4 bg-slate-900 border border-rose-500/30 text-rose-200 p-4 rounded-xl shadow-2xl flex flex-col space-y-3 hidden" style="backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.95);">
+    <div class="flex items-start space-x-3">
+      <i class="fa-solid fa-circle-exclamation text-rose-400 text-lg mt-0.5 flex-shrink-0"></i>
+      <div>
+        <h4 class="font-bold text-sm text-white">Application Initialization Crash Detected</h4>
+        <p class="text-xs text-slate-300 mt-1 leading-relaxed" id="error-boundary-message">An unexpected runtime JavaScript exception interrupted the app boot sequence.</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-end space-x-3 pt-1">
+      <button onclick="location.reload()" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">
+        Reload Page
+      </button>
+      <button onclick="clearAllDataAndReset()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white transition">
+        Reset App Data (Clear Storage)
+      </button>
+    </div>
+  </div>
+
+  <!-- Left Sidebar (Conversation History & logo) -->
+  <aside class="w-80 bg-darksidebar flex flex-col border-r border-glassborder flex-shrink-0 z-20">
+    <!-- Brand Logo -->
+    <div class="h-16 flex items-center justify-between px-6 border-b border-glassborder">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-accent to-glow flex items-center justify-center shadow-lg shadow-accent/20">
+          <i class="fa-solid fa-wand-magic-sparkles text-white text-sm"></i>
+        </div>
+        <span class="text-lg font-bold bg-gradient-to-r from-white via-indigo-200 to-indigo-300 bg-clip-text text-transparent tracking-wide">
+          Antigravity AI
+        </span>
+      </div>
+      <div class="text-xs px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full font-mono">v1.0</div>
+    </div>
+
+    <!-- New Chat Trigger Area -->
+    <div class="p-4">
+      <button id="btn-new-chat" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-accent to-glow hover:from-accent hover:to-accent text-white font-medium flex items-center justify-center space-x-2 shadow-lg shadow-accent/15 hover:shadow-accent/25 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group">
+        <i class="fa-solid fa-plus text-sm group-hover:rotate-90 transition-transform duration-200"></i>
+        <span>New Conversation</span>
+      </button>
+    </div>
+
+    <!-- Navigation Scroll Container -->
+    <div class="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar space-y-1" id="chat-history-container">
+      <!-- Chat history items will load dynamically here -->
+      <div class="text-center py-8 text-slate-500 text-sm">
+        <i class="fa-regular fa-comments text-3xl mb-2 block opacity-40"></i>
+        No conversations yet
+      </div>
+    </div>
+
+    <!-- Sidebar Bottom Controls -->
+    <div class="p-4 border-t border-glassborder space-y-3">
+      <!-- Quick API key status -->
+      <div class="flex items-center justify-between px-3 py-2 bg-slate-900/50 border border-glassborder rounded-xl text-xs">
+        <span class="text-slate-400">LLM Status:</span>
+        <span id="api-status-badge" class="flex items-center space-x-1.5 text-rose-400 font-medium">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          <span>Unconfigured</span>
+        </span>
+      </div>
+      
+      <!-- Settings Launcher Button -->
+      <button id="btn-settings-trigger" class="w-full py-2.5 px-4 rounded-xl border border-glassborder hover:bg-slate-800/40 text-slate-300 font-medium flex items-center justify-between transition-all duration-200 group">
+        <div class="flex items-center space-x-3">
+          <i class="fa-solid fa-sliders text-indigo-400 group-hover:rotate-45 transition-transform duration-300"></i>
+          <span>API Configurations</span>
+        </div>
+        <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Chat Panel -->
+  <main class="flex-1 flex flex-col min-w-0 bg-darkbg relative h-full">
+    <!-- Topbar Settings Panel / Headers -->
+    <header class="h-16 border-b border-glassborder flex items-center justify-between px-6 z-10 bg-darkbg/85 backdrop-blur-md">
+      <!-- Top Left: Config Overview -->
+      <div class="flex items-center space-x-4 min-w-0">
+        <div class="hidden sm:flex items-center space-x-2 text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-glassborder">
+          <span class="text-slate-500">Provider:</span>
+          <span id="header-provider" class="text-indigo-400 font-bold uppercase">Gemini</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-500">Model:</span>
+          <span id="header-model" class="text-slate-300 font-medium">gemini-1.5-flash</span>
+        </div>
+      </div>
+
+      <!-- Top Right: Controller Dropdowns -->
+      <div class="flex items-center space-x-3">
+        <!-- AI Expert Persona Dropdown -->
+        <div class="relative group">
+          <label class="block text-[10px] text-slate-500 font-semibold uppercase absolute -top-2 left-2 px-1 bg-darkbg z-10">AI Persona</label>
+          <select id="select-persona" class="h-10 pl-3 pr-8 rounded-lg bg-slate-900/80 border border-glassborder text-xs text-slate-200 font-medium focus:outline-none focus:border-accent hover:border-slate-700 transition duration-150 cursor-pointer appearance-none">
+            <option value="developer">Developer (Senior)</option>
+            <option value="reviewer">Code Reviewer</option>
+            <option value="architect">Architect</option>
+            <option value="pm">Project Manager</option>
+            <option value="ba">Business Analyst</option>
+            <option value="tester">QA Automation</option>
+            <option value="writer">Technical Writer</option>
+          </select>
+          <i class="fa-solid fa-angle-down text-slate-500 text-[10px] absolute right-3 top-3.5 pointer-events-none"></i>
+        </div>
+
+        <!-- Interaction Mode Dropdown -->
+        <div class="relative">
+          <label class="block text-[10px] text-slate-500 font-semibold uppercase absolute -top-2 left-2 px-1 bg-darkbg z-10">Interaction Mode</label>
+          <select id="select-interaction-mode" class="h-10 pl-3 pr-8 rounded-lg bg-slate-900/80 border border-glassborder text-xs text-slate-200 font-medium focus:outline-none focus:border-accent hover:border-slate-700 transition duration-150 cursor-pointer appearance-none">
+            <option value="markdown">Markdown Formatted</option>
+            <option value="enhancer">Prompt Enhancer</option>
+            <option value="qa">Concise Q&A</option>
+            <option value="code">Code Generator</option>
+          </select>
+          <i class="fa-solid fa-angle-down text-slate-500 text-[10px] absolute right-3 top-3.5 pointer-events-none"></i>
+        </div>
+
+        <!-- Mini Trigger Settings Button for Mobile or fast toggle -->
+        <button id="btn-quick-settings" class="w-10 h-10 rounded-lg bg-slate-900/80 border border-glassborder flex items-center justify-center hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition duration-150" title="API Settings">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Objective / Goal Panel (Appended behind the scenes) -->
+    <div class="px-6 py-2.5 bg-slate-950/45 border-b border-glassborder/50 flex flex-wrap sm:flex-nowrap items-center space-y-2 sm:space-y-0 sm:space-x-4">
+      <div class="flex items-center space-x-2 text-xs font-semibold text-slate-400 flex-shrink-0 uppercase tracking-wide">
+        <i class="fa-solid fa-bullseye text-indigo-400"></i>
+        <span>Conversation Objective / Goal</span>
+      </div>
+      <input type="text" id="input-objective" value="General Purpose" 
+        class="w-full sm:flex-1 h-8 px-3 rounded-md bg-slate-900/40 border border-glassborder text-xs text-slate-300 focus:outline-none focus:border-accent/60 placeholder-slate-600 transition"
+        placeholder="Enter context target (e.g. Debugging database leak, writing api docs...)">
+    </div>
+
+    <!-- Active Chat Messages Container -->
+    <div class="flex-1 overflow-y-auto px-6 py-8 custom-scrollbar space-y-6" id="message-stream-container">
+      
+      <!-- Welcome Slate Message -->
+      <div class="max-w-2xl mx-auto py-12 text-center" id="welcome-container">
+        <div class="inline-flex w-16 h-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 shadow-lg shadow-indigo-500/5 mb-6">
+          <i class="fa-solid fa-wand-magic-sparkles text-accent text-3xl animate-pulse"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2">Welcome to Antigravity Chat</h2>
+        <p class="text-slate-400 text-sm max-w-md mx-auto mb-8">
+          A high-performance workspace engineered for expert LLM pair-programming, fast multi-modal context integration, and offline privacy.
+        </p>
+        
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-xl mx-auto">
+          <div class="p-4 rounded-xl border border-glassborder bg-slate-900/40">
+            <div class="flex items-center space-x-3 mb-2">
+              <i class="fa-solid fa-microphone text-indigo-400"></i>
+              <h3 class="text-sm font-semibold text-slate-200">Voice Dictation</h3>
+            </div>
+            <p class="text-xs text-slate-400">Wrap Web Speech API to compose rich prompts hands-free.</p>
+          </div>
+          
+          <div class="p-4 rounded-xl border border-glassborder bg-slate-900/40">
+            <div class="flex items-center space-x-3 mb-2">
+              <i class="fa-solid fa-file-pdf text-indigo-400"></i>
+              <h3 class="text-sm font-semibold text-slate-200">In-Browser Parsers</h3>
+            </div>
+            <p class="text-xs text-slate-400">Drop PDF, TXT, JSON or MD files. Extracted text automatically feeds into your prompts.</p>
+          </div>
+        </div>
+        
+        <!-- Helper Warning for Config -->
+        <div id="welcome-config-alert" class="mt-8 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5 max-w-md mx-auto text-xs text-amber-300 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Please click <strong>API Configurations</strong> in the sidebar to configure keys first!</span>
+        </div>
+      </div>
+
+      <!-- Content loads here dynamically -->
+    </div>
+
+    <!-- Active Attached Files Bar -->
+    <div class="px-6 space-y-2 hidden" id="attached-files-bar">
+      <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+        <span class="flex items-center space-x-1.5">
+          <i class="fa-solid fa-paperclip text-indigo-400 text-[10px]"></i>
+          <span>Active Context References</span>
+        </span>
+        <button id="btn-clear-attachments" class="text-slate-500 hover:text-slate-300 font-semibold transition">Clear all</button>
+      </div>
+      <div class="flex flex-wrap gap-2 py-1 max-h-24 overflow-y-auto custom-scrollbar" id="attached-files-pills">
+        <!-- Attached file pills load here -->
+      </div>
+    </div>
+
+    <!-- Floating Input Form Area -->
+    <div class="p-6 border-t border-glassborder/50 bg-darkbg/50">
+      <div class="max-w-4xl mx-auto relative glassmorphism rounded-2xl p-2 shadow-2xl flex flex-col transition duration-300">
+        <!-- Floating input layout -->
+        <div class="flex items-end space-x-2">
+          
+          <!-- File Attach Clip button -->
+          <div class="relative">
+            <input type="file" id="file-uploader" class="hidden" accept=".txt,.md,.json,.pdf" multiple>
+            <button id="btn-attach" type="button" class="w-10 h-10 rounded-xl hover:bg-slate-800/80 text-slate-400 hover:text-slate-200 transition duration-150 flex items-center justify-center" title="Attach context file (.txt, .md, .json, .pdf)">
+              <i class="fa-solid fa-paperclip text-lg"></i>
+            </button>
+          </div>
+
+          <!-- Expanding Textarea -->
+          <div class="flex-1 min-w-0">
+            <textarea id="chat-textarea" rows="1" placeholder="Ask anything... (Shift+Enter for newline, Enter to send)"
+              class="w-full bg-transparent text-slate-100 placeholder-slate-500 border-0 focus:ring-0 focus:outline-none resize-none max-h-64 py-2 px-1 text-sm custom-scrollbar leading-relaxed"></textarea>
+          </div>
+
+          <!-- Microphone speech trigger button -->
+          <button id="btn-microphone" type="button" class="w-10 h-10 rounded-xl hover:bg-slate-800/80 text-slate-400 hover:text-rose-400 transition duration-150 flex items-center justify-center" title="Speech to Text Dictation">
+            <i class="fa-solid fa-microphone text-lg"></i>
+          </button>
+
+          <!-- Submit Button -->
+          <button id="btn-submit" type="button" class="w-10 h-10 rounded-xl bg-accent hover:bg-indigo-700 text-white shadow-lg shadow-accent/20 hover:shadow-accent/45 transition-all duration-150 flex items-center justify-center">
+            <i class="fa-solid fa-paper-plane text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <div class="text-[10px] text-center text-slate-600 mt-2">
+        Powered by Gemini & OpenAI. Speech features best supported on Chromium. Context files parsed 100% locally.
+      </div>
+    </div>
+  </main>
+
+  <!-- Slider Configuration Drawer Overlay -->
+  <div id="settings-slideover" class="fixed inset-0 overflow-hidden z-50 pointer-events-none opacity-0 transition-all duration-300 invisible">
+    <!-- Dark transparent backdrop -->
+    <div id="settings-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300 opacity-0"></div>
+    
+    <div class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
+      <div class="w-screen max-w-md pointer-events-auto transform translate-x-full transition-transform duration-300 ease-out" id="settings-panel">
+        <div class="h-full flex flex-col bg-slate-900 border-l border-glassborder shadow-2xl overflow-y-auto custom-scrollbar">
+          
+          <!-- Drawer Header -->
+          <div class="p-6 border-b border-glassborder flex items-center justify-between bg-darksidebar">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-md">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white">LLM API Configuration</h3>
+                <p class="text-[10px] text-slate-400">Manage credentials & hyper-parameters</p>
+              </div>
+            </div>
+            <button id="btn-close-settings" class="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-300 transition duration-150">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+
+          <!-- Drawer Form -->
+          <form id="settings-form" class="p-6 flex-1 space-y-6">
+            
+            <!-- Provider selection -->
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide">LLM Provider</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="provider-gemini" class="py-3 px-4 rounded-xl border border-accent bg-accent/10 text-white font-medium flex items-center justify-center space-x-2 transition duration-200">
+                  <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
+                  <span>Gemini</span>
+                </button>
+                <button type="button" id="provider-openai" class="py-3 px-4 rounded-xl border border-glassborder bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:border-slate-700 font-medium flex items-center justify-center space-x-2 transition duration-200">
+                  <i class="fa-solid fa-bolt text-slate-500"></i>
+                  <span>OpenAI</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Model Selection dropdown -->
+            <div class="space-y-2">
+              <label for="config-model" class="block text-xs font-semibold text-slate-400 uppercase tracking-wide">Model Selection</label>
+              <div class="relative">
+                <select id="config-model" class="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-950 border border-glassborder text-sm text-slate-200 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition duration-150 cursor-pointer appearance-none">
+                  <!-- Loaded dynamically based on provider -->
+                </select>
+                <i class="fa-solid fa-angle-down text-slate-500 text-xs absolute right-4 top-4 pointer-events-none"></i>
+              </div>
+            </div>
+
+            <!-- API Key input -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label for="config-apikey" class="block text-xs font-semibold text-slate-400 uppercase tracking-wide">API Key</label>
+                <button type="button" id="toggle-key-visibility" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition">Show Key</button>
+              </div>
+              <div class="relative">
+                <input type="password" id="config-apikey" 
+                  class="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-950 border border-glassborder text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition duration-150 font-mono"
+                  placeholder="Paste your API key here...">
+                <i class="fa-solid fa-key text-slate-500 absolute left-4 top-4 text-xs"></i>
+              </div>
+              <p class="text-[10px] text-slate-500 flex items-start space-x-1">
+                <i class="fa-solid fa-shield-halved mt-0.5 text-indigo-500/60"></i>
+                <span>Keys are saved 100% client-side in LocalStorage and only dispatched directly to provider gateway.</span>
+              </p>
+            </div>
+
+            <!-- Base URL input -->
+            <div class="space-y-2">
+              <label for="config-baseurl" class="block text-xs font-semibold text-slate-400 uppercase tracking-wide">Base Endpoint URL</label>
+              <div class="relative">
+                <input type="text" id="config-baseurl" 
+                  class="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-950 border border-glassborder text-sm text-slate-100 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition duration-150 font-mono"
+                  placeholder="https://...">
+                <i class="fa-solid fa-network-wired text-slate-500 absolute left-4 top-4 text-xs"></i>
+              </div>
+            </div>
+
+            <!-- Temperature slider -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                <span>Temperature (Creativity)</span>
+                <span id="temp-val-display" class="font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">0.7</span>
+              </div>
+              <input type="range" id="config-temperature" min="0.0" max="1.0" step="0.1" value="0.7" 
+                class="w-full h-1.5 bg-slate-950 border-0 rounded-lg appearance-none cursor-pointer accent-accent transition duration-150">
+              <div class="flex justify-between text-[10px] text-slate-600 px-1 font-semibold">
+                <span>Precise / Strict (0.0)</span>
+                <span>Balanced (0.7)</span>
+                <span>Creative (1.0)</span>
+              </div>
+            </div>
+
+          </form>
+
+          <!-- Drawer Footer Actions -->
+          <div class="p-6 border-t border-glassborder bg-darksidebar flex space-x-3">
+            <button id="btn-settings-reset" type="button" class="flex-1 py-3 px-4 rounded-xl border border-glassborder hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition font-medium text-sm">
+              Reset Configs
+            </button>
+            <button id="btn-settings-save" type="button" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-accent to-glow hover:from-accent hover:to-accent text-white shadow-lg shadow-accent/25 transition font-medium text-sm">
+              Save Configs
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Raw Text Previewer Modal -->
+  <div id="preview-modal" class="fixed inset-0 overflow-hidden z-50 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300 invisible">
+    <div id="preview-backdrop" class="absolute inset-0 bg-black/75 backdrop-blur-sm pointer-events-auto"></div>
+    <div class="relative bg-slate-900 border border-glassborder rounded-2xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden flex flex-col pointer-events-auto max-h-[80vh] transform translate-y-4 transition-transform duration-300" id="preview-content">
+      <div class="px-6 py-4 border-b border-glassborder flex items-center justify-between bg-darksidebar">
+        <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-file-invoice text-indigo-400"></i>
+          <span id="preview-title">Document Content Viewer</span>
+        </h4>
+        <button id="btn-close-preview" class="text-slate-500 hover:text-slate-300 font-medium transition text-lg">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+        <pre class="text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-glassborder overflow-x-auto whitespace-pre-wrap font-mono select-text" id="preview-body"></pre>
+      </div>
+      <div class="px-6 py-3 border-t border-glassborder bg-darksidebar flex justify-between items-center text-[10px] text-slate-500 font-semibold">
+        <span id="preview-stats">0 characters | 0 words</span>
+        <button id="btn-copy-preview" class="text-indigo-400 hover:text-indigo-300 font-bold transition flex items-center space-x-1">
+          <i class="fa-regular fa-copy"></i>
+          <span>Copy text</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF.js CDN libraries & setups (deferred parsing engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Ensure pdf.js worker endpoint points to public mirror safely
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+
+  <!-- Marked.js for markdown parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+  <!-- Core JavaScript Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
