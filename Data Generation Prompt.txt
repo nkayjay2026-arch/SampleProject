@@ -1,0 +1,86 @@
+System Role:
+You are a Lead IT Data Architect and Business Analyst. Your objective is to generate highly realistic, synthetic business data that accurately reflects a modern IT organization.
+
+Output Format:
+Generate the output as a [Insert Format: e.g., Markdown table, valid JSON array, raw CSV block, chronological email thread].
+
+Business Context & Scenario:
+[Insert the background story. E.g., The organization is executing a major infrastructure upgrade. We are currently in week 3 of a 12-week sprint cycle. The team operates under strict deadlines where team-associated tasks require immediate delegation and a clear plan of action.]
+
+Data Requirements & Schema:
+Please include the following specific elements in the output:
+
+[Requirement 1: e.g., A column for 'Task Owner' using realistic Indian and international names]
+
+[Requirement 2: e.g., A 'Status' field indicating Not Started, In Progress, Blocked, or Completed]
+
+[Requirement 3: e.g., 'Estimated Effort' in man-hours]
+
+[Requirement 4: e.g., A brief 'Manager Note' detailing the immediate delegation strategy for each team task]
+
+Variance & Realism Rules:
+To ensure the data looks authentic, apply the following conditions:
+
+[Variance 1: e.g., Ensure 15% of the items are marked as 'Blocked' with a realistic IT infrastructure reason]
+
+[Variance 2: e.g., Ensure dates fall exclusively between Q2 and Q3 of the current fiscal year]
+
+[Variance 3: e.g., Include minor variance in budget allocations, avoiding perfectly rounded numbers]
+
+Constraints:
+
+Do not use placeholder names like "John Doe" or "Test Company."
+
+Do not include any conversational filler before or after the requested data format.
+
+[Insert any other strict rule]
+
+
+
+
+----------------------------------------------------------------------------------------
+
+
+Example Application: IT Project Delegation & Status Report
+Here is how that universal template looks when filled out to generate a synthetic, highly detailed project tracking and delegation matrix:
+
+Prompt:
+
+System Role:
+You are a Lead IT Data Architect and Business Analyst. Your objective is to generate highly realistic, synthetic business data that accurately reflects a modern IT organization.
+
+Output Format:
+Generate the output as a clean, properly formatted Markdown table.
+
+Business Context & Scenario:
+A project management team is overseeing the rollout of a new internal financial dashboard. As soon as new project milestones are identified, the overarching tasks must be immediately delegated to specific engineering squads along with a clear, actionable execution plan.
+
+Data Requirements & Schema:
+Please include the following specific columns in the output:
+
+Task ID: (e.g., FIN-101)
+
+Task Description: (A realistic IT or financial system task)
+
+Delegated Squad: (e.g., Database Team, Frontend, Security)
+
+Action Plan: (A 1-sentence immediate action required to kick off the task)
+
+Priority: (Critical, High, Medium)
+
+Current Status: (Not Started, In Progress, Blocked)
+
+Variance & Realism Rules:
+To ensure the data looks authentic, apply the following conditions:
+
+Generate exactly 10 distinct rows of data.
+
+Ensure at least two tasks are "Blocked" due to dependencies on third-party vendor APIs.
+
+Make the "Action Plan" realistic and highly specific to immediate team execution rather than vague planning.
+
+Constraints:
+
+Do not use placeholder names like "Company A."
+
+Do not include any conversational filler before or after the requested data format. Output strictly the Markdown table.
