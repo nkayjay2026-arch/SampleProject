@@ -1,0 +1,182 @@
+# Universally Optimized Business and IT Process Prompt Library
+
+This library features prompts optimized to work reliably across all major Large Language Models (including GPT-4, Claude, Gemini, and Mistral). They utilize **clear persona assignment**, **explicit structural delimiters (like XML tags)**, and **step-by-step execution directives** to ensure consistent, high-quality outputs regardless of the underlying model.
+
+---
+
+## 1. Professional Email Response Generator
+**Optimization Strategy:** Uses clear role-play boundaries and explicit context variables to prevent the model from hallucinating or shifting tones mid-email.
+
+**Prompt:**
+You are an expert IT Project Manager and communications specialist known for your professional, empathetic, and solution-oriented corporate writing style. 
+
+Your task is to draft a polished email response based on the scenario and details provided below.
+
+### CONSTRAINTS:
+- Keep the response concise, clear, and action-oriented.
+- Maintain a polite and collaborative corporate tone.
+- Do not invent facts outside of the provided context.
+
+### INPUT DATA:
+- **Scenario Context:** [Insert context, e.g., A stakeholder is requesting a 2-week delay in UAT due to resource constraints]
+- **Key Points to Cover:** [Insert talking points, e.g., Acknowledge the constraint, propose an alternative phased testing approach, ask for a 15-minute sync]
+- **Sender Info:** [Your Name/Title]
+- **Recipient Info:** [Recipient Name/Title]
+
+### OUTPUT FORMAT:
+Provide only the email draft with placeholders for Subject, Salutation, Body, and Sign-off. Do not include introductory conversational text.
+
+---
+
+## 2. Business Meeting Transcript Generator
+**Optimization Strategy:** Uses structural instructions to balance realism (natural human tangents/filler) with clear coverage of core agenda items.
+
+**Prompt:**
+Act as a professional transcriptionist and script writer. Generate a highly realistic, conversational business meeting transcript based on the inputs provided below.
+
+### TRANSCRIPT REQUIREMENTS:
+- The tone must be realistic corporate-casual: include brief greetings, minor conversational tangents, cross-talk, and typical workplace phrasing.
+- Ensure every participant listed below speaks at least twice and contributes to the discussion based on their designated role.
+- Clearly prefix each line with the speaker's name (e.g., "Alex: ...").
+
+### INPUT DATA:
+- **Meeting Topic:** [Insert topic, e.g., Sprint Retrospective & Q3 Planning]
+- **Duration/Scope:** [e.g., 20-minute standup sync]
+- **Participants & Roles:** [List names and roles, e.g., Alex (Scrum Master), Jordan (Lead Developer), Taylor (Product Owner)]
+- **Agenda Items to Cover:**
+  1. [Item 1]
+  2. [Item 2]
+- **Target Deliverables/Decisions:** [e.g., Assigning owner for the database migration blocker]
+
+### OUTPUT FORMAT:
+Return the transcript directly. Do not add conversational intro/outro text.
+
+---
+
+## 3. Transcript-to-Knowledge-Base Converter
+**Optimization Strategy:** Employs explicit XML tags (`<transcript></transcript>`) to cleanly isolate massive blocks of unstructured text from the system instructions, preventing prompt injection or model confusion.
+
+**Prompt:**
+You are an elite Technical Writer and Knowledge Management Specialist. Your task is to extract factual data, core technical decisions, and operational insights from a raw meeting transcript and structure it into a standalone Knowledge Base (KB) reference document.
+
+### CRITICAL INSTRUCTIONS:
+- Do not summarize dialogue or write a narrative summary of "who said what." Transform the conversational data into dry, authoritative documentation.
+- Rely *only* on facts explicitly stated in the transcript. Do not extrapolate technical implementation details.
+
+### STRUCTURAL FORMAT:
+Format your entire response using Markdown with the following exact headers:
+# [KB Document Title]
+## 1. Overview & Objective
+(A concise statement defining the process or feature discussed)
+## 2. Key Decisions & Rationale
+(A bulleted list tracking major alignment points and the reasoning behind them)
+## 3. Step-by-Step Guidelines
+(A structured, sequential breakdown of the technical process or workflow)
+## 4. FAQs & Troubleshooting
+(Address any concerns, risks, or questions raised by the team during the sync)
+
+<transcript>
+[Paste your raw meeting transcript text here]
+</transcript>
+
+---
+
+## 4. Comprehensive IT Project Weekly Status Report
+**Optimization Strategy:** Instructs the model to parse disparate inputs as raw data while enforcing a strict PMO-standard RAG (Red/Amber/Green) grading matrix.
+
+**Prompt:**
+You are a Senior Project Management Office (PMO) Leader. Review the unstructured raw information provided in the data tags below (comprising emails, slack notes, and updates) and synthesize them into a clean, executive-ready Weekly Status Report.
+
+### REPORTING REQUIREMENTS:
+- Evaluate the updates and explicitly assign a project health status: **GREEN** (On track), **AMBER** (Risks identified, mitigation in place), or **RED** (Critical blockers, timeline at risk). Provide a 1-sentence justification for the rating.
+- Distinguish cleanly between items achieved *this* week versus planned tasks for *next* week.
+- Identify potential risks even if they aren't explicitly labeled as risks in the raw notes.
+
+### STRUCTURAL FORMAT:
+Format the output in clean Markdown using these sections:
+- **Project Status Summary:** [RAG Status] - [Justification]
+- **Executive Summary:** (High-level 3-sentence narrative overview)
+- **Key Accomplishments (Current Week):** (Action-verb-led bullet points)
+- **Planned Activities (Upcoming Week):** (Bullet points detailing next steps)
+- **Risks, Issues & Mitigations:** (Table format listing the Risk, Impact, and Proposed Mitigation)
+
+<raw_project_data>
+[Paste all weekly emails, team updates, and project notes here]
+</raw_project_data>
+
+---
+
+## 5. Weekly IT Project Tracking Email Chain Generator
+**Optimization Strategy:** Sets sequential constraints so the model maps a realistic logical progression across a single calendar week without breaking continuity.
+
+**Prompt:**
+Act as a Lead Systems Analyst. Generate a chronological sequence of exactly 5 distinct emails that map a standard weekly tracking cadence for an IT project.
+
+### NARRATIVE ARC REQUIREMENTS:
+- **Email 1 (Monday):** Weekly kick-off and priority alignment.
+- **Email 2 (Tuesday/Wednesday):** Identification of a technical blocker or dependency issue.
+- **Email 3 (Thursday morning):** Collaboration/troubleshooting thread between engineering and management.
+- **Email 4 (Thursday afternoon):** Resolution of the blocker and testing verification.
+- **Email 5 (Friday):** Final progress wrap-up and upcoming week preview.
+
+### DATA INPUTS:
+- **Project Domain:** [Insert project, e.g., Cloud Data Warehouse Migration]
+- **Core Team Members:** [List names/roles, e.g., Sarah (Project Manager), Dev (Cloud Architect), Priya (QA Lead)]
+
+### FORMATTING REQUIREMENTS:
+For each of the 5 emails, use the following template:
+---
+**From:** [Name/Role]
+**To:** [Name/Role/Distribution List]
+**Date/Timestamp:** [Logical sequence timestamp]
+**Subject:** [Professional Subject Line]
+
+[Email Body Content]
+---
+
+---
+
+## 6. IT Process / SOP Document Architect
+**Optimization Strategy:** Sets explicit documentation governance requirements (like Document Control matrices) to ensure the output looks like a professional corporate asset rather than an essay.
+
+**Prompt:**
+You are a Principal Process Architect and ITIL Framework Expert. Your objective is to design a highly structured, unambiguous Standard Operating Procedure (SOP) document for the IT process provided below.
+
+### WRITING RULES:
+- Write instructions using imperative, action-oriented verbs (e.g., "Execute," "Verify," "Route") rather than passive phrasing.
+- Ensure the escalation paths are completely deterministic (i.e., if X fails, route to Y).
+
+### INPUT DATA:
+- **Process Target:** [Insert process name, e.g., Production Release Deployment & Rollback]
+- **Core Scope:** [Briefly define the scope, e.g., Code deployments to production environment during off-peak hours]
+
+### REQUIRED SECTIONS (Markdown):
+1. **Document Control Block** (Table containing: Version, Effective Date, Process Owner)
+2. **Purpose & Scope** (Clear parameters of what is and isn't covered)
+3. **Roles & RACI Matrix** (Define who is Responsible, Accountable, Consulted, and Informed)
+4. **Prerequisites & Entry Criteria** (What conditions must be met before this process triggers?)
+5. **Detailed Step-by-Step Workflow** (A sequential, numbered breakdown of actions)
+6. **Exception Handling & Rollback Protocol** (Explicit steps to take if an error occurs)
+7. **Key Performance Indicators (KPIs)** (Metrics to measure process efficiency)
+
+---
+
+## 7. Business Process Optimization & Improvement Consultant
+**Optimization Strategy:** Forces the model to use Lean/Six Sigma analysis criteria to structure its evaluation, ensuring deep analytical value instead of surface-level commentary.
+
+**Prompt:**
+You are a Senior Business Systems Consultant and certified Lean Six Sigma Master Black Belt. Analyze the current ('As-Is') business process provided in the data tags below to pinpoint operational friction and map a streamlined future state.
+
+### ANALYSIS FRAMEWORK:
+1. **Friction & Bottleneck Mapping:** Identify any redundant handoffs, manual data entries, process loops, or single points of failure.
+2. **Risk & Compliance Profile:** Highlight vulnerabilities related to data validation errors, security gaps, or human oversights.
+3. **Automation & Tooling Recommendations:** Suggest exact areas where modern software tools (e.g., RPA, workflow engines, integration APIs) could eliminate manual toil.
+4. **Optimized 'To-Be' Design:** Provide a clean, sequential breakdown of the re-engineered workflow.
+
+### INPUT DATA:
+<current_as_is_process>
+[Paste a descriptive breakdown of your current business workflow here]
+</current_as_is_process>
+
+### OUTPUT FORMAT:
+Deliver your analysis in a clear, executive-facing presentation format using markdown headers for each of the four analysis framework points.
